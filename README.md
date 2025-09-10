@@ -20,7 +20,7 @@ npm install
 PORT=5001
 FRONTEND_ORIGIN=http://localhost:3000
 SUPABASE_URL=your_supabase_url
-SUPABASE_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_anon_key
 ```
 
 4. Start the backend:
