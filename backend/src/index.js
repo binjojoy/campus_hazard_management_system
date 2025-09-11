@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import healthRouter from "./routes/health.js";
 import authRouter from "./routes/auth.js";
+import hazardRoutes from "./routes/hazard.js";
 
 dotenv.config();
 
@@ -24,6 +25,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/health", healthRouter);
 app.use("/api/auth", authRouter);
+app.use("/api/hazard", hazardRoutes);
 
 
 app.use((req, res) => res.status(404).json({ error: "Not found" }));
