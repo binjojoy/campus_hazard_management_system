@@ -4,6 +4,8 @@ import dotenv from "dotenv";
 import healthRouter from "./routes/health.js";
 import authRouter from "./routes/auth.js";
 import hazardRoutes from "./routes/hazard.js";
+import actionsRouter from "./routes/actions.js";
+import feedbackRouter from "./routes/feedback.js";
 
 dotenv.config();
 
@@ -22,7 +24,8 @@ app.get("/", (req, res) => {
   });
 });
 
-
+app.use("/api/hazards/:hazardId/actions", actionsRouter);
+app.use("/api/hazards/:hazardId/feedback", feedbackRouter);
 app.use("/api/health", healthRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/hazard", hazardRoutes);
