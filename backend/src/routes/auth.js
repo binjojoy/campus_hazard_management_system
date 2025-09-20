@@ -7,6 +7,10 @@ const router = express.Router();
  * Signup Route
  */
 router.post("/signup", async (req, res) => {
+
+  console.log("--- SERVER RECEIVED BODY ---");
+  console.log(JSON.stringify(req.body, null, 2));
+  console.log("--------------------------");
   const { email, password, username, role } = req.body;
 
   try {
@@ -75,7 +79,8 @@ router.post("/login", async (req, res) => {
     res.json({
       status: "success",
       message: "Login successful",
-      user: { ...user, profile }
+      user: { ...data.user, profile },
+      session: data.session
     });
   } catch (err) {
     res.status(500).json({ status: "error", message: err.message });
