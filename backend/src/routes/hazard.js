@@ -76,7 +76,7 @@ router.get("/fetch_all_hazards", async (req, res) => {
 
     // Get all unique user IDs from the hazards
     const userIds = [...new Set(hazards.map(h => h.user_id))];
-
+    console.log(userIds);
     // Fetch all corresponding users in a single query
     const { data: users, error: usersError } = await supabase
       .from("users")
