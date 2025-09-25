@@ -34,6 +34,7 @@ export default function Dashboard() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [expandedImage, setExpandedImage] = useState(null);
   const [notification, setNotification] = useState(null);
+  const [deleteConfirmation, setDeleteConfirmation] = useState(null); // New state for delete pop-up
 
   const user = JSON.parse(localStorage.getItem("user"));
   const userId = user?.id;
@@ -104,6 +105,18 @@ export default function Dashboard() {
   
   const handleFileChange = (e) => {
     setImageFile(e.target.files[0]);
+  };
+  
+  // New: Function to handle hazard deletion
+  const handleDelete = async (hazardId) => {
+    try {
+      await axios.delete(`http://localhost:5001/api/hazard/delete_hazard/${hazardId}`);
+      setHazards(hazards.filter(h => h.hazard_id !== hazardId));
+      setDeleteConfirmation(null); // Close the pop-up
+      setNotification({ message: 'Hazard deleted successfully', type: 'success' });
+    } catch (err) {
+      setNotification({ message: 'Failed to delete hazard.', type: 'error' });
+    }
   };
 
   const getStatusIcon = (status) => {
@@ -253,7 +266,7 @@ export default function Dashboard() {
                       {' Urgent'}
                     </span>
                   )}
-                  <button className="close-card-btn"><FaTimes /></button>
+                  <button className="close-card-btn" onClick={() => setDeleteConfirmation(hazard)}><FaTimes /></button>
                 </div>
                 <div className="hazard-content">
                   <h4>{hazard.hazard_title}</h4>
@@ -360,16 +373,42 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* Corrected: The Notification Card */}
+      {/* The Notification Card */}
       {notification && (
         <div className={`notification-card ${notification.type}`}>
           <div className="notification-content">
-            <FaCheckCircle className="notification-icon" />
-            <span className="notification-message-text">{notification.message}</span>
+            <FaCheckCircle />
+            <span>{notification.message}</span>
           </div>
           <button className="notification-close-btn" onClick={() => setNotification(null)}>
             <FaTimes />
           </button>
+        </div>
+      )}
+
+      {/* New: Delete Confirmation Pop-up */}
+      {deleteConfirmation && (
+        <div className="modal-overlay">
+          <div className="delete-confirmation-modal">
+            <h3>Confirm Deletion</h3>
+            <p>Are you sure you want to delete this hazard report?</p>
+            <div className="modal-actions">
+              <button
+                type="button"
+                className="cancel-btn"
+                onClick={() => setDeleteConfirmation(null)}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="delete-btn"
+                onClick={() => handleDelete(deleteConfirmation.hazard_id)}
+              >
+                Delete
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

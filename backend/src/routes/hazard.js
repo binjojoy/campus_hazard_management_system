@@ -122,4 +122,71 @@ router.get("/fetch_hazard", async (req, res) => {
   }
 });
 
+// New: API to delete a single hazard by its ID
+router.delete("/delete_hazard/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({ error: "Hazard ID is required" });
+    }
+
+    const { error } = await supabase
+      .from("hazard")
+      .delete()
+      .eq("hazard_id", id);
+
+    if (error) {
+      return res.status(500).json({ error: error.message });
+    }
+
+    res.json({ message: `Hazard with ID ${id} deleted successfully` });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// New: API to delete all hazards for a specific user ID
+router.delete("/delete_by_user/:user_id", async (req, res) => {
+  try {
+    const { user_id } = req.params;
+
+    if (!user_id) {
+      return res.status(400).json({ error: "User ID is required" });
+    }
+
+    const { error } = await supabase
+      .from("hazard")
+      .delete()
+      .eq("user_id", user_id);
+
+    if (error) {
+      return res.status(500).json({ error: error.message });
+    }
+
+    res.json({ message: `All hazards for user ${user_id} deleted successfully` });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// New: API to delete all hazards (use with caution!)
+router.delete("/delete_all", async (req, res) => {
+  try {
+    const { error } = await supabase
+      .from("hazard")
+      .delete()
+      .neq("hazard_id", "00000000-0000-0000-0000-000000000000"); // Use a value that doesn't exist to delete all
+
+    if (error) {
+      return res.status(500).json({ error: error.message });
+    }
+
+    res.json({ message: "All hazards deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
 export default router;
