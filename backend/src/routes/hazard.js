@@ -1,14 +1,50 @@
 import express from "express";
 import supabase from "../services/supabaseClient.js";
+import multer from "multer"; // Import multer
+import { v4 as uuidv4 } from "uuid"; // To generate unique filenames
+
+// Initialize multer to handle file uploads, storing them in memory
+const upload = multer({ storage: multer.memoryStorage() });
 
 const router = express.Router();
 
-router.post("/new_hazard", async (req, res) => {
+// This route now uses the 'upload.single' middleware to handle a file named 'image'
+router.post("/new_hazard", upload.single("image"), async (req, res) => {
   try {
-    const { hazard_title, hazard_description, is_urgent, image_url, user_id } = req.body;
+    const { hazard_title, hazard_description, is_urgent, user_id } = req.body;
+    const imageFile = req.file; // The uploaded file is now available here
 
     if (!hazard_title || !user_id) {
       return res.status(400).json({ error: "hazard_title and user_id are required" });
+    }
+
+    let image_url = null;
+
+    // If an image was uploaded, handle the Supabase upload
+    if (imageFile) {
+      // Create a unique filename for the image
+      const uniqueId = uuidv4();
+      const fileExtension = imageFile.originalname.split(".").pop();
+      const fileName = `${uniqueId}.${fileExtension}`;
+
+      // Upload the file to the Supabase storage bucket
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from("hazards") // Your storage bucket name
+        .upload(fileName, imageFile.buffer, {
+          contentType: imageFile.mimetype,
+          cacheControl: "3600",
+        });
+
+      if (uploadError) {
+        return res.status(500).json({ error: "Image upload failed: " + uploadError.message });
+      }
+
+      // Get the public URL for the uploaded file
+      const { data: publicUrlData } = supabase.storage
+        .from("hazards")
+        .getPublicUrl(fileName);
+
+      image_url = publicUrlData.publicUrl;
     }
 
     const { data, error } = await supabase
@@ -17,8 +53,8 @@ router.post("/new_hazard", async (req, res) => {
         {
           hazard_title,
           hazard_description,
-          is_urgent: is_urgent || false,   
-          image_url: image_url || null,    
+          is_urgent: is_urgent || false,
+          image_url, // Use the uploaded image URL or null
           user_id,
         },
       ])

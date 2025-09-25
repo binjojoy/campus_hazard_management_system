@@ -17,7 +17,8 @@ import {
   FaImage,
   FaCheckCircle,
   FaTimes,
-  FaRegClock, // Added FaRegClock for the time icon
+  FaRegClock,
+  FaExpand, // New: Import expand icon
 } from "react-icons/fa";
 import { BiMenu } from "react-icons/bi";
 
@@ -26,10 +27,11 @@ export default function Dashboard() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [isUrgent, setIsUrgent] = useState(false);
-  const [imageUrl, setImageUrl] = useState("");
+  const [imageFile, setImageFile] = useState(null);
   const [message, setMessage] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [expandedImage, setExpandedImage] = useState(null); // New: State for expanded image modal
 
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"));
@@ -41,7 +43,6 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (!userId) return;
-    // Modified to include status in the fetch request or assume default
     axios
       .get(`http://localhost:5001/api/hazard/fetch_hazard?user_id=${userId}`)
       .then((res) => setHazards(res.data.hazards.map(h => ({ ...h, status: h.status || 'normal' }))))
@@ -51,15 +52,24 @@ export default function Dashboard() {
   const handleUpload = async (e) => {
     e.preventDefault();
     try {
+      const formData = new FormData();
+      formData.append("hazard_title", title);
+      formData.append("hazard_description", description);
+      formData.append("is_urgent", isUrgent);
+      formData.append("user_id", userId);
+      formData.append("status", 'normal');
+      
+      if (imageFile) {
+        formData.append("image", imageFile);
+      }
+
       const res = await axios.post(
         "http://localhost:5001/api/hazard/new_hazard",
+        formData,
         {
-          hazard_title: title,
-          hazard_description: description,
-          is_urgent: isUrgent,
-          image_url: imageUrl || null,
-          user_id: userId,
-          status: 'normal'
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
         }
       );
 
@@ -68,7 +78,7 @@ export default function Dashboard() {
       setTitle("");
       setDescription("");
       setIsUrgent(false);
-      setImageUrl("");
+      setImageFile(null);
       setShowForm(false);
     } catch (err) {
       setMessage(err.response?.data?.error || err.message);
@@ -78,6 +88,10 @@ export default function Dashboard() {
   const handleLogout = () => {
     localStorage.removeItem("user");
     navigate("/");
+  };
+  
+  const handleFileChange = (e) => {
+    setImageFile(e.target.files[0]);
   };
 
   return (
@@ -207,7 +221,15 @@ export default function Dashboard() {
                   <h4>{hazard.hazard_title}</h4>
                   <p className="hazard-description-text">{hazard.hazard_description}</p>
                   {hazard.image_url ? (
-                    <img src={hazard.image_url} alt="hazard" className="hazard-image" />
+                    <div className="hazard-image-container">
+                      <img src={hazard.image_url} alt="hazard" className="hazard-image" />
+                      <button 
+                        className="expand-image-btn"
+                        onClick={() => setExpandedImage(hazard.image_url)}
+                      >
+                        <FaExpand />
+                      </button>
+                    </div>
                   ) : (
                     <div className="hazard-image-placeholder">
                       <FaImage className="placeholder-icon" />
@@ -215,7 +237,6 @@ export default function Dashboard() {
                     </div>
                   )}
                   <div className="hazard-meta">
-                    {/* Assuming location can be added here or is part of description */}
                     {hazard.location && <span className="hazard-location">{hazard.location}</span>}
                     <span className="hazard-timestamp">
                       <FaRegClock />
@@ -260,10 +281,10 @@ export default function Dashboard() {
                 required
               />
               <input
-                type="text"
-                placeholder="Image URL (optional)"
-                value={imageUrl}
-                onChange={(e) => setImageUrl(e.target.value)}
+                type="file"
+                name="image"
+                accept="image/*"
+                onChange={handleFileChange}
               />
               <label className="urgent">
                 <input
@@ -290,6 +311,17 @@ export default function Dashboard() {
           </div>
         </div>
       )}
+      
+      {/* New: Expanded Image Modal */}
+      {expandedImage && (
+        <div className="expanded-image-modal" onClick={() => setExpandedImage(null)}>
+          <button className="modal-close-btn" onClick={() => setExpandedImage(null)}>
+            <FaTimes />
+          </button>
+          <img src={expandedImage} alt="Expanded Hazard" />
+        </div>
+      )}
+
     </div>
   );
 }
