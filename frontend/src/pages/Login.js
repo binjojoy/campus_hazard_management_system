@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import "../login_styles.css"; // reuse your friend’s CSS for the flip effect
+import "../ui/login_styles.css"; // reuse your friend’s CSS for the flip effect
 
 export default function Login() {
   const [isFlipped, setIsFlipped] = useState(false);

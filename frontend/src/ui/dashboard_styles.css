@@ -1,40 +1,46 @@
-/* Creative Color Palette */
+/* Color Palette */
 :root {
   --primary-text-color: #605C5C;
   --secondary-text-color: #8A8888;
-  --background-color: #ECE2D0;
+  --tertiary-text-color: #999999;
+  --background-color: #fafafa;
   --card-bg-color: #FDFDFD;
   --border-color: #CEBEBE;
   --active-bg-color: #A26769;
   --hover-bg-color: #D5B9B2;
   --accent-color: #6D2E46;
-  --urgent-bg: #E74C3C;
-  --urgent-text: #fff;
-  --normal-bg: #8A8888;
-  --normal-text: #fff;
+  
+  /* Status Colors (adapted to the palette) */
+  --status-urgent-bg: #E74C3C;
+  --status-pending-bg: #ff9800;
+  --status-resolved-bg: var(--active-bg-color);
+  --status-accepted-bg: var(--active-bg-color);
+  --status-normal-bg: #e6f7e6;
+  --status-normal-text: #27ae60;
+  --status-badge-text: #fff;
 }
 
 /* Layout */
 .dashboard-layout {
   display: flex;
-  min-height: 100vh;
-  background: #f7f5f5; /* A light, neutral background */
+  height: 100vh; /* Set a fixed height for the parent container */
+  background: var(--background-color);
   font-family: "Poppins", sans-serif;
   transition: all 0.3s ease;
+  overflow: hidden; /* New: Prevents the entire page from scrolling */
 }
 
 /* Sidebar */
 .sidebar {
   width: 250px;
   background: #fff;
-  border-right: 1px solid #dcdcdc; /* Lighter border color */
+  border-right: 1px solid #dcdcdc;
   padding: 20px;
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  flex-direction: column; /* Stack children vertically */
   transition: width 0.3s ease;
   position: relative;
-  overflow: hidden;
+  height: 100%; /* Take up the full height of the parent */
 }
 
 /* Collapsed Sidebar */
@@ -52,7 +58,7 @@
   padding-bottom: 20px;
   margin-bottom: 20px;
   border-bottom: 1px solid #dcdcdc;
-  gap: 10px; /* Gap between icon, text, and button */
+  gap: 10px;
 }
 
 .sidebar-header-text {
@@ -83,14 +89,14 @@
   font-size: 24px;
   cursor: pointer;
   color: #a8a8a8;
-  padding: 5px; /* Added minor padding for click area */
-  position: initial; /* Reset positioning */
+  padding: 5px;
+  position: initial;
 }
 
 .sidebar-toggle-btn img {
   width: 24px;
   height: 24px;
-  display: block; /* Ensures the image behaves as a block element */
+  display: block;
 }
 
 .dashboard-layout.sidebar-collapsed .sidebar-toggle-btn {
@@ -101,6 +107,12 @@
   position: relative;
   top: initial;
   padding: 0;
+}
+
+/* Scrollable Sidebar Content */
+.sidebar-scrollable-content {
+  flex: 1; /* Takes up all available space */
+  overflow-y: auto; /* Makes this section scrollable */
 }
 
 /* Sidebar Navigation */
@@ -217,16 +229,59 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 20px;
 }
 
-.topbar h1 {
+.welcome-message {
   margin: 0;
   color: #4a4c4a;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.user-name {
+  color: #000000;
+  font-style: italic;
 }
 
 .topbar p {
   margin: 0;
   color: #a8a8a8;
+}
+
+/* Notification Summary in Topbar */
+.notifications {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  color: var(--tertiary-text-color);
+}
+
+.notifications-summary {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-right: 1px solid var(--border-color);
+  padding-right: 20px;
+  margin-right: -10px;
+}
+
+.notifications-summary span {
+  font-weight: 600;
+}
+
+.notifications-summary .urgent {
+  color: var(--status-urgent-bg);
+}
+
+.notifications-summary .pending {
+  color: var(--status-pending-bg);
+}
+
+.notifications-summary .resolved {
+  color: var(--status-resolved-bg);
 }
 
 .notifications button {
@@ -259,46 +314,157 @@
   color: #4a4c4a;
 }
 
+/* Grid Layout for Cards */
 .hazard-grid {
   display: grid;
-  gap: 15px;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
 }
 
 .hazard-card {
-  background: #fff;
+  background: var(--card-bg-color);
   padding: 16px;
   border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
-.hazard-card img {
-  margin-top: 10px;
-  max-width: 100%;
-  border-radius: 8px;
+.hazard-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 }
 
-.hazard-meta {
+.hazard-card-header {
   display: flex;
   justify-content: space-between;
-  margin-top: 10px;
-  font-size: 0.85rem;
-  color: #a8a8a8;
+  align-items: center;
+  margin-bottom: 12px;
 }
 
-.status {
-  padding: 4px 8px;
-  border-radius: 6px;
+.status-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-size: 0.8rem;
+  padding: 4px 10px;
+  border-radius: 15px;
+  color: var(--status-badge-text);
+  font-weight: 600;
+  text-transform: uppercase;
+  user-select: none;
 }
 
-.status.urgent {
-  background: #ffe5e5;
-  color: #e74c3c;
+.status-urgent {
+  background: var(--status-urgent-bg);
 }
 
-.status.normal {
-  background: #e6f7e6;
-  color: #27ae60;
+.status-pending {
+  background: var(--status-pending-bg);
+}
+
+.status-resolved {
+  background: var(--status-resolved-bg);
+}
+
+.status-accepted {
+  background: var(--status-accepted-bg);
+}
+
+.status-normal {
+  background: var(--status-normal-bg);
+  color: var(--status-normal-text);
+}
+
+.close-card-btn {
+  background: transparent;
+  border: none;
+  color: var(--tertiary-text-color);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+}
+
+.hazard-content {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.hazard-content h4 {
+  margin: 0 0 8px;
+  color: var(--primary-text-color);
+  font-size: 1.1rem;
+}
+
+.hazard-description-text {
+  font-size: 0.9rem;
+  color: var(--secondary-text-color);
+  margin: 0 0 12px;
+}
+
+/* Images */
+.hazard-image {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.hazard-image-placeholder {
+  background: #f0f0f0;
+  height: 150px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: var(--tertiary-text-color);
+  font-size: 0.9rem;
+}
+
+.placeholder-icon {
+  font-size: 3rem;
+  margin-bottom: 8px;
+}
+
+/* Meta Information */
+.hazard-meta {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: var(--tertiary-text-color);
+  gap: 5px;
+}
+
+.hazard-location {
+  font-weight: 500;
+  color: var(--secondary-text-color);
+}
+
+.hazard-timestamp {
+  font-style: italic;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Hazard Card Footer for Bottom Status */
+.hazard-card-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-top: 10px;
+  margin-top: auto;
 }
 
 /* Floating Action Button */
@@ -315,18 +481,17 @@
   font-size: 24px;
   cursor: pointer;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  display: flex; /* Added for centering */
-  align-items: center; /* Added for centering */
-  justify-content: center; /* Added for centering */
-  transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
 }
 
 .fab:hover {
-  background: #502138;
+  background: #2a2a2a;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-  
 /* Modal Overlay */
 .modal-overlay {
   position: fixed;
@@ -360,7 +525,6 @@
   from {
     transform: scale(0.95);
   }
-
   to {
     transform: scale(1);
   }
@@ -399,7 +563,7 @@
 .upload-section form textarea:focus {
   outline: none;
   border-color: var(--accent-color);
-  box-shadow: 0 0 0 3px rgba(109, 46, 70, 0.2);
+  box-shadow: 0 0 0 3px rgba(74, 76, 74, 0.2);
 }
 
 .upload-section form textarea {
@@ -462,7 +626,7 @@
 }
 
 .modal-actions .upload-btn:hover {
-  background-color: #502138;
+  background-color: #2a2a2a;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 

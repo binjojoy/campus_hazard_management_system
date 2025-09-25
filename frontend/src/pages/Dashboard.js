@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import "../dashboard_styles.css";
+import "../ui/dashboard_styles.css";
 import sidebarIcon from '../assets/sidebar.png';
 import {
   FaHome,
@@ -14,6 +14,10 @@ import {
   FaSignOutAlt,
   FaPlus,
   FaBell,
+  FaImage,
+  FaCheckCircle,
+  FaTimes,
+  FaRegClock, // Added FaRegClock for the time icon
 } from "react-icons/fa";
 import { BiMenu } from "react-icons/bi";
 
@@ -37,9 +41,10 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (!userId) return;
+    // Modified to include status in the fetch request or assume default
     axios
       .get(`http://localhost:5001/api/hazard/fetch_hazard?user_id=${userId}`)
-      .then((res) => setHazards(res.data.hazards))
+      .then((res) => setHazards(res.data.hazards.map(h => ({ ...h, status: h.status || 'normal' }))))
       .catch((err) => console.log(err));
   }, [userId]);
 
@@ -54,6 +59,7 @@ export default function Dashboard() {
           is_urgent: isUrgent,
           image_url: imageUrl || null,
           user_id: userId,
+          status: 'normal'
         }
       );
 
@@ -163,7 +169,9 @@ export default function Dashboard() {
       <main className="main-content">
         <header className="topbar">
           <div>
-            <h1>Campus Safety Dashboard</h1>
+            <h1 className="welcome-message">
+              {user?.profile?.username ? `Welcome, ${user.profile.username}!` : "Welcome!"}
+            </h1>
             <p>Manage and track campus hazards</p>
           </div>
           <div className="notifications">
@@ -186,20 +194,42 @@ export default function Dashboard() {
           <div className="hazard-grid">
             {hazards.map((hazard) => (
               <div key={hazard.hazard_id} className="hazard-card">
-                <h4>{hazard.hazard_title}</h4>
-                <p>{hazard.hazard_description}</p>
-                {hazard.image_url && (
-                  <img src={hazard.image_url} alt="hazard" />
-                )}
-                <div className="hazard-meta">
-                  <span>{new Date(hazard.reported_time).toLocaleString()}</span>
-                  <span
-                    className={
-                      hazard.is_urgent ? "status urgent" : "status normal"
-                    }
-                  >
-                    {hazard.is_urgent ? "Urgent" : "Normal"}
-                  </span>
+                <div className="hazard-card-header">
+                  {hazard.is_urgent && (
+                    <span className="status-badge status-urgent">
+                      <FaExclamationTriangle />
+                      {' Urgent'}
+                    </span>
+                  )}
+                  <button className="close-card-btn"><FaTimes /></button>
+                </div>
+                <div className="hazard-content">
+                  <h4>{hazard.hazard_title}</h4>
+                  <p className="hazard-description-text">{hazard.hazard_description}</p>
+                  {hazard.image_url ? (
+                    <img src={hazard.image_url} alt="hazard" className="hazard-image" />
+                  ) : (
+                    <div className="hazard-image-placeholder">
+                      <FaImage className="placeholder-icon" />
+                      <span>No Image Available</span>
+                    </div>
+                  )}
+                  <div className="hazard-meta">
+                    {/* Assuming location can be added here or is part of description */}
+                    {hazard.location && <span className="hazard-location">{hazard.location}</span>}
+                    <span className="hazard-timestamp">
+                      <FaRegClock />
+                      {new Date(hazard.reported_time).toLocaleString()}
+                    </span>
+                  </div>
+                </div>
+                <div className="hazard-card-footer">
+                  {hazard.status && (
+                    <span className={`status-badge status-${hazard.status}`}>
+                      {(hazard.status === 'resolved' || hazard.status === 'accepted' || hazard.status === 'normal') && <FaCheckCircle />}
+                      {` ${hazard.status.charAt(0).toUpperCase() + hazard.status.slice(1)}`}
+                    </span>
+                  )}
                 </div>
               </div>
             ))}
