@@ -2,7 +2,20 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../dashboard_styles.css";
-import sidebarIcon from '../assets/sidebar.png'; // Import the sidebar icon image
+import sidebarIcon from '../assets/sidebar.png';
+import {
+  FaHome,
+  FaExclamationTriangle,
+  FaFileAlt,
+  FaMapMarkedAlt,
+  FaScroll,
+  FaPhoneAlt,
+  FaCog,
+  FaSignOutAlt,
+  FaPlus,
+  FaBell,
+} from "react-icons/fa";
+import { BiMenu } from "react-icons/bi";
 
 export default function Dashboard() {
   const [hazards, setHazards] = useState([]);
@@ -11,8 +24,8 @@ export default function Dashboard() {
   const [isUrgent, setIsUrgent] = useState(false);
   const [imageUrl, setImageUrl] = useState("");
   const [message, setMessage] = useState("");
-  const [showForm, setShowForm] = useState(false); // modal visibility
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false); // State for collapsible sidebar
+  const [showForm, setShowForm] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"));
@@ -46,14 +59,10 @@ export default function Dashboard() {
 
       setMessage("Hazard uploaded successfully!");
       setHazards([res.data.hazard, ...hazards]);
-
-      // reset form
       setTitle("");
       setDescription("");
       setIsUrgent(false);
       setImageUrl("");
-
-      // close modal
       setShowForm(false);
     } catch (err) {
       setMessage(err.response?.data?.error || err.message);
@@ -66,8 +75,11 @@ export default function Dashboard() {
   };
 
   return (
-    <div className={`dashboard-layout ${isSidebarCollapsed ? "sidebar-collapsed" : ""}`}>
-      {/* Sidebar */}
+    <div
+      className={`dashboard-layout ${
+        isSidebarCollapsed ? "sidebar-collapsed" : ""
+      }`}
+    >
       <aside className="sidebar">
         <div className="sidebar-header">
           <span className="sidebar-icon">🛡️</span>
@@ -79,26 +91,42 @@ export default function Dashboard() {
             className="sidebar-toggle-btn"
             onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
           >
-            {isSidebarCollapsed ? "›" : <img src={sidebarIcon} alt="Toggle Sidebar" className="sidebar-icon-img" />}
+            {isSidebarCollapsed ? (
+              <BiMenu />
+            ) : (
+              <img
+                src={sidebarIcon}
+                alt="Toggle Sidebar"
+                className="sidebar-icon-img"
+              />
+            )}
           </button>
         </div>
 
         <h4 className="sidebar-heading">Navigation</h4>
         <nav className="sidebar-nav">
           <a href="#" className="active">
-            <span className="nav-icon">⌂</span>
+            <span className="nav-icon">
+              <FaHome />
+            </span>
             <span className="nav-text">Dashboard</span>
           </a>
           <a href="#">
-            <span className="nav-icon">⚠️</span>
+            <span className="nav-icon">
+              <FaExclamationTriangle />
+            </span>
             <span className="nav-text">My Hazards</span>
           </a>
           <a href="#">
-            <span className="nav-icon">📃</span>
+            <span className="nav-icon">
+              <FaFileAlt />
+            </span>
             <span className="nav-text">Reports</span>
           </a>
           <a href="#">
-            <span className="nav-icon">🗺️</span>
+            <span className="nav-icon">
+              <FaMapMarkedAlt />
+            </span>
             <span className="nav-text">Campus Map</span>
           </a>
         </nav>
@@ -106,38 +134,45 @@ export default function Dashboard() {
         <h4 className="sidebar-heading">Resources</h4>
         <div className="sidebar-resources">
           <a href="#">
-            <span className="nav-icon">📜</span>
+            <span className="nav-icon">
+              <FaScroll />
+            </span>
             <span className="nav-text">Safety Guidelines</span>
           </a>
           <a href="#">
-            <span className="nav-icon">📞</span>
+            <span className="nav-icon">
+              <FaPhoneAlt />
+            </span>
             <span className="nav-text">Emergency Contacts</span>
           </a>
           <a href="#">
-            <span className="nav-icon">⚙️</span>
+            <span className="nav-icon">
+              <FaCog />
+            </span>
             <span className="nav-text">Settings</span>
           </a>
         </div>
         <button className="logout" onClick={handleLogout}>
-          <span className="nav-icon">→</span>
+          <span className="nav-icon">
+            <FaSignOutAlt />
+          </span>
           <span className="nav-text">Logout</span>
         </button>
       </aside>
 
-      {/* Main Content */}
       <main className="main-content">
-        {/* Topbar */}
         <header className="topbar">
           <div>
             <h1>Campus Safety Dashboard</h1>
             <p>Manage and track campus hazards</p>
           </div>
           <div className="notifications">
-            <button>🔔 Notifications ({hazards.length})</button>
+            <button>
+              <FaBell /> Notifications ({hazards.length})
+            </button>
           </div>
         </header>
 
-        {/* Search */}
         <div className="search-bar">
           <input
             type="text"
@@ -145,7 +180,6 @@ export default function Dashboard() {
           />
         </div>
 
-        {/* Hazard List */}
         <section className="hazards">
           <h3>Your Hazard Reports ({hazards.length})</h3>
           {hazards.length === 0 && <p>No hazards reported yet.</p>}
@@ -173,12 +207,10 @@ export default function Dashboard() {
         </section>
       </main>
 
-      {/* Floating Action Button */}
       <button className="fab" onClick={() => setShowForm(true)}>
-        ＋
+        <FaPlus />
       </button>
 
-      {/* Modal Form */}
       {showForm && (
         <div className="modal-overlay">
           <div className="upload-section modal">

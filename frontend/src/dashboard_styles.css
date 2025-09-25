@@ -315,12 +315,18 @@
   font-size: 24px;
   cursor: pointer;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  display: flex; /* Added for centering */
+  align-items: center; /* Added for centering */
+  justify-content: center; /* Added for centering */
+  transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .fab:hover {
   background: #502138;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
+  
 /* Modal Overlay */
 .modal-overlay {
   position: fixed;
