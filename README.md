@@ -2,7 +2,7 @@
 
 ## Backend Setup
 
-1. Navigate to backend:
+1.  Navigate to backend:
 
 ```bash
 cd backend
