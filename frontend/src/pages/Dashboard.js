@@ -23,19 +23,29 @@ import {
 import { BiMenu } from "react-icons/bi";
 
 export default function Dashboard() {
+  const navigate = useNavigate();
   const [hazards, setHazards] = useState([]);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [isUrgent, setIsUrgent] = useState(false);
   const [imageFile, setImageFile] = useState(null);
   const [message, setMessage] = useState("");
-  const [showForm, setShowForm] = useState(false); // Corrected: State for modal visibility
+  const [showForm, setShowForm] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [expandedImage, setExpandedImage] = useState(null);
+  const [notification, setNotification] = useState(null);
 
-  const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"));
   const userId = user?.id;
+
+  useEffect(() => {
+    if (notification) {
+      const timer = setTimeout(() => {
+        setNotification(null);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [notification]);
 
   useEffect(() => {
     if (!user) navigate("/");
@@ -80,8 +90,10 @@ export default function Dashboard() {
       setIsUrgent(false);
       setImageFile(null);
       setShowForm(false);
+      setNotification({ message: 'Hazard posted successfully!', type: 'success' });
     } catch (err) {
       setMessage(err.response?.data?.error || err.message);
+      setNotification({ message: 'Failed to post hazard.', type: 'error' });
     }
   };
 
@@ -284,7 +296,7 @@ export default function Dashboard() {
         </section>
       </main>
 
-      {/* Corrected: The Create Hazard Form Modal */}
+      {/* The Create Hazard Form Modal */}
       <button className="fab" onClick={() => setShowForm(true)}>
         <FaPlus />
       </button>
@@ -339,13 +351,25 @@ export default function Dashboard() {
         </div>
       )}
       
-      {/* New: Expanded Image Modal */}
       {expandedImage && (
         <div className="expanded-image-modal" onClick={() => setExpandedImage(null)}>
           <button className="modal-close-btn" onClick={() => setExpandedImage(null)}>
             <FaTimes />
           </button>
           <img src={expandedImage} alt="Expanded Hazard" />
+        </div>
+      )}
+
+      {/* Corrected: The Notification Card */}
+      {notification && (
+        <div className={`notification-card ${notification.type}`}>
+          <div className="notification-content">
+            <FaCheckCircle className="notification-icon" />
+            <span className="notification-message-text">{notification.message}</span>
+          </div>
+          <button className="notification-close-btn" onClick={() => setNotification(null)}>
+            <FaTimes />
+          </button>
         </div>
       )}
     </div>

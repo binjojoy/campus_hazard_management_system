@@ -90,7 +90,7 @@
   border-bottom: none;
   margin-bottom: 0;
   padding-bottom: 0;
-  justify-content: center; /* Center the remaining toggle button */
+  justify-content: center;
 }
 
 /* Corrected Sidebar Toggle Button */
@@ -196,9 +196,14 @@
 .dashboard-layout.sidebar-collapsed .sidebar-resources a,
 .dashboard-layout.sidebar-collapsed .logout {
   padding: 8px 0;
-  justify-content: center; /* This will center the icons */
+  justify-content: center;
 }
 
+.dashboard-layout.sidebar-collapsed .sidebar-header {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
 
 .dashboard-layout.sidebar-collapsed .sidebar-resources {
   border-top: none;
@@ -574,7 +579,7 @@
 /* Modal Container (the form box) */
 .upload-section.modal {
   background-color: #fff;
-  border-radius: 12px;
+  border-radius: 28px;
   box-shadow: 0 16px 32px rgba(0, 0, 0, 0.2);
   padding: 32px;
   max-width: 500px;
@@ -693,6 +698,65 @@
 .modal-actions .upload-btn:hover {
   background-color: #2a2a2a;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* New: Notification Card Styles */
+.notification-card {
+  position: fixed;
+  bottom: 80px; /* Position it above the floating action button */
+  right: 20px;
+  z-index: 1001; /* Ensure it's above other elements like the FAB */
+  background-color: var(--card-bg-color);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 350px;
+  min-width: 250px;
+  transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+  transform: translateX(0); /* Start position for animation */
+}
+
+.notification-card .notification-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-grow: 1;
+}
+
+.notification-card .notification-icon {
+  font-size: 1.5rem;
+  color: var(--status-solved-bg); /* Use solved color for success icon */
+}
+
+.notification-card .notification-message-text {
+  font-size: 0.9rem;
+  color: var(--primary-text-color);
+  font-weight: 500;
+}
+
+.notification-card .notification-close-btn {
+  background: transparent;
+  border: none;
+  color: var(--tertiary-text-color);
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+/* This class can be applied when the notification needs to slide out */
+.notification-card.hidden {
+  transform: translateX(120%);
+  opacity: 0;
+}
+
+.notification-card.error {
+  border-left: 5px solid var(--status-rejected-bg); /* Red border for errors */
+}
+
+.notification-card.success {
+  border-left: 5px solid var(--status-solved-bg); /* Green border for success */
 }
 
 .message {
