@@ -34,7 +34,8 @@ export default function Dashboard() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [expandedImage, setExpandedImage] = useState(null);
   const [notification, setNotification] = useState(null);
-  const [deleteConfirmation, setDeleteConfirmation] = useState(null); // New state for delete pop-up
+  const [deleteConfirmation, setDeleteConfirmation] = useState(null); 
+  const [searchTerm, setSearchTerm] = useState(""); // New: State for search term
 
   const user = JSON.parse(localStorage.getItem("user"));
   const userId = user?.id;
@@ -107,18 +108,17 @@ export default function Dashboard() {
     setImageFile(e.target.files[0]);
   };
   
-  // New: Function to handle hazard deletion
   const handleDelete = async (hazardId) => {
     try {
       await axios.delete(`http://localhost:5001/api/hazard/delete_hazard/${hazardId}`);
       setHazards(hazards.filter(h => h.hazard_id !== hazardId));
-      setDeleteConfirmation(null); // Close the pop-up
+      setDeleteConfirmation(null);
       setNotification({ message: 'Hazard deleted successfully', type: 'success' });
     } catch (err) {
       setNotification({ message: 'Failed to delete hazard.', type: 'error' });
     }
   };
-
+  
   const getStatusIcon = (status) => {
     if (status === 'solved' || status === 'acknowledged') {
       return <FaCheckCircle />;
@@ -145,6 +145,11 @@ export default function Dashboard() {
     return `${day}/${month}/${year}, ${hours}:${minutes} ${ampm}`;
   };
 
+  const filteredHazards = hazards.filter(hazard =>
+    hazard.hazard_title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (hazard.hazard_description && hazard.hazard_description.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
+  
   return (
     <div
       className={`dashboard-layout ${
@@ -250,14 +255,16 @@ export default function Dashboard() {
           <input
             type="text"
             placeholder="Search hazards by title, description, or location..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
 
         <section className="hazards">
-          <h3>Your Hazard Reports ({hazards.length})</h3>
-          {hazards.length === 0 && <p>No hazards reported yet.</p>}
+          <h3>Your Hazard Reports ({filteredHazards.length})</h3>
+          {filteredHazards.length === 0 && <p>No hazards reported yet.</p>}
           <div className="hazard-grid">
-            {hazards.map((hazard) => (
+            {filteredHazards.map((hazard) => (
               <div key={hazard.hazard_id} className="hazard-card">
                 <div className="hazard-card-header">
                   {hazard.is_urgent && (
@@ -309,7 +316,6 @@ export default function Dashboard() {
         </section>
       </main>
 
-      {/* The Create Hazard Form Modal */}
       <button className="fab" onClick={() => setShowForm(true)}>
         <FaPlus />
       </button>
@@ -373,7 +379,6 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* The Notification Card */}
       {notification && (
         <div className={`notification-card ${notification.type}`}>
           <div className="notification-content">
@@ -386,7 +391,6 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* New: Delete Confirmation Pop-up */}
       {deleteConfirmation && (
         <div className="modal-overlay">
           <div className="delete-confirmation-modal">
