@@ -13,21 +13,19 @@
   /* Status Colors (adapted to the palette) */
   --status-urgent-bg: #E74C3C;
   --status-pending-bg: #ff9800;
-  --status-resolved-bg: var(--active-bg-color);
-  --status-accepted-bg: var(--active-bg-color);
-  --status-normal-bg: #e6f7e6;
-  --status-normal-text: #27ae60;
+  --status-solved-bg: #4caf50;
+  --status-acknowledged-bg: #2196f3;
+  --status-rejected-bg: #f44336;
   --status-badge-text: #fff;
 }
 
 /* Layout */
 .dashboard-layout {
   display: flex;
-  height: 100vh; /* Set a fixed height for the parent container */
+  height: 100vh;
   background: var(--background-color);
   font-family: "Poppins", sans-serif;
   transition: all 0.3s ease;
-  overflow: hidden; /* New: Prevents the entire page from scrolling */
 }
 
 /* Sidebar */
@@ -37,10 +35,10 @@
   border-right: 1px solid #dcdcdc;
   padding: 20px;
   display: flex;
-  flex-direction: column; /* Stack children vertically */
+  flex-direction: column;
   transition: width 0.3s ease;
   position: relative;
-  height: 100%; /* Take up the full height of the parent */
+  height: 100%;
 }
 
 /* Collapsed Sidebar */
@@ -82,6 +80,19 @@
   color: #4a4c4a;
 }
 
+/* NEW: Hide the shield icon and the header text when the sidebar is collapsed */
+.dashboard-layout.sidebar-collapsed .sidebar-icon,
+.dashboard-layout.sidebar-collapsed .sidebar-header-text {
+  display: none;
+}
+
+.dashboard-layout.sidebar-collapsed .sidebar-header {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+  justify-content: center; /* Center the remaining toggle button */
+}
+
 /* Corrected Sidebar Toggle Button */
 .sidebar-toggle-btn {
   background: transparent;
@@ -111,8 +122,8 @@
 
 /* Scrollable Sidebar Content */
 .sidebar-scrollable-content {
-  flex: 1; /* Takes up all available space */
-  overflow-y: auto; /* Makes this section scrollable */
+  flex: 1;
+  overflow-y: auto;
 }
 
 /* Sidebar Navigation */
@@ -180,18 +191,14 @@
   display: none;
 }
 
+/* NEW: Center icons when collapsed */
 .dashboard-layout.sidebar-collapsed .sidebar-nav a,
 .dashboard-layout.sidebar-collapsed .sidebar-resources a,
 .dashboard-layout.sidebar-collapsed .logout {
   padding: 8px 0;
-  justify-content: center;
+  justify-content: center; /* This will center the icons */
 }
 
-.dashboard-layout.sidebar-collapsed .sidebar-header {
-  border-bottom: none;
-  margin-bottom: 0;
-  padding-bottom: 0;
-}
 
 .dashboard-layout.sidebar-collapsed .sidebar-resources {
   border-top: none;
@@ -365,17 +372,16 @@
   background: var(--status-pending-bg);
 }
 
-.status-resolved {
-  background: var(--status-resolved-bg);
+.status-acknowledged {
+  background: var(--status-acknowledged-bg);
 }
 
-.status-accepted {
-  background: var(--status-accepted-bg);
+.status-solved {
+  background: var(--status-solved-bg);
 }
 
-.status-normal {
-  background: var(--status-normal-bg);
-  color: var(--status-normal-text);
+.status-rejected {
+  background: var(--status-rejected-bg);
 }
 
 .close-card-btn {
@@ -568,7 +574,7 @@
 /* Modal Container (the form box) */
 .upload-section.modal {
   background-color: #fff;
-  border-radius: 28px;
+  border-radius: 12px;
   box-shadow: 0 16px 32px rgba(0, 0, 0, 0.2);
   padding: 32px;
   max-width: 500px;

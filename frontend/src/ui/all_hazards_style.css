@@ -1,0 +1,211 @@
+/* All Hazards Specific Styles */
+
+/* This hides the FAB on the All Hazards page */
+.all-hazards-page .fab {
+  display: none;
+}
+
+/* New: Sort Buttons */
+.sort-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.sort-btn {
+  background-color: var(--card-bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--secondary-text-color);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sort-btn:hover {
+  background-color: var(--hover-bg-color);
+  color: var(--primary-text-color);
+}
+
+.sort-btn.active {
+  background-color: var(--accent-color);
+  color: white;
+  border-color: var(--accent-color);
+}
+
+/* New: Line-by-line layout for the All Hazards page */
+.hazard-list-view {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Styles for the individual list items */
+.hazard-list-view .hazard-list-item {
+  background: var(--card-bg-color);
+  border: none;
+  text-align: left;
+  width: 100%;
+  max-width: 800px;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.hazard-list-view .hazard-list-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.hazard-list-view .list-item-content {
+  display: flex;
+  flex-grow: 1;
+  align-items: center;
+  gap: 20px;
+}
+
+.hazard-list-view .list-item-main-info {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.hazard-list-view .list-item-title-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 5px;
+}
+
+.hazard-list-view .list-item-title {
+  margin: 0;
+  font-size: 1.1rem;
+  color: var(--primary-text-color);
+  font-weight: 600;
+}
+
+.hazard-list-view .list-item-description {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--secondary-text-color);
+}
+
+.hazard-list-view .list-item-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
+  min-width: 150px;
+}
+
+.hazard-list-view .list-item-username {
+  font-weight: 500;
+  color: var(--secondary-text-color);
+  font-size: 0.9rem;
+}
+
+.hazard-list-view .list-item-timestamp {
+  font-style: italic;
+  font-size: 0.75rem;
+  color: var(--tertiary-text-color);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Expanded Card Modal */
+.expanded-card-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1002;
+}
+
+.expanded-card-container {
+  background-color: var(--card-bg-color);
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.2);
+  max-width: 600px;
+  width: 90%;
+  position: relative;
+}
+
+.expanded-card-container .modal-close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: var(--primary-text-color);
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.expanded-card-image-container {
+  margin-bottom: 20px;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+  height: 250px;
+}
+
+.expanded-card-image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.expanded-card-content h4 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.expanded-card-content p {
+  font-size: 1rem;
+  color: var(--secondary-text-color);
+  margin-bottom: 20px;
+}
+
+.expanded-card-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.expanded-card-username,
+.expanded-card-timestamp {
+  font-size: 0.9rem;
+  color: var(--tertiary-text-color);
+}
+
+.expanded-card-username {
+  font-weight: 500;
+}
+
+.expanded-card-timestamp {
+  font-style: italic;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.expanded-card-footer {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+}

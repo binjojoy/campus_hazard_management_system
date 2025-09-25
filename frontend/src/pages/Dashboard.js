@@ -18,7 +18,7 @@ import {
   FaCheckCircle,
   FaTimes,
   FaRegClock,
-  FaExpand, // New: Import expand icon
+  FaExpand,
 } from "react-icons/fa";
 import { BiMenu } from "react-icons/bi";
 
@@ -29,9 +29,9 @@ export default function Dashboard() {
   const [isUrgent, setIsUrgent] = useState(false);
   const [imageFile, setImageFile] = useState(null);
   const [message, setMessage] = useState("");
-  const [showForm, setShowForm] = useState(false);
+  const [showForm, setShowForm] = useState(false); // Corrected: State for modal visibility
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [expandedImage, setExpandedImage] = useState(null); // New: State for expanded image modal
+  const [expandedImage, setExpandedImage] = useState(null);
 
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"));
@@ -45,7 +45,7 @@ export default function Dashboard() {
     if (!userId) return;
     axios
       .get(`http://localhost:5001/api/hazard/fetch_hazard?user_id=${userId}`)
-      .then((res) => setHazards(res.data.hazards.map(h => ({ ...h, status: h.status || 'normal' }))))
+      .then((res) => setHazards(res.data.hazards))
       .catch((err) => console.log(err));
   }, [userId]);
 
@@ -57,7 +57,7 @@ export default function Dashboard() {
       formData.append("hazard_description", description);
       formData.append("is_urgent", isUrgent);
       formData.append("user_id", userId);
-      formData.append("status", 'normal');
+      formData.append("status", 'pending');
       
       if (imageFile) {
         formData.append("image", imageFile);
@@ -94,6 +94,32 @@ export default function Dashboard() {
     setImageFile(e.target.files[0]);
   };
 
+  const getStatusIcon = (status) => {
+    if (status === 'solved' || status === 'acknowledged') {
+      return <FaCheckCircle />;
+    }
+    if (status === 'rejected') {
+      return <FaTimes />;
+    }
+    return null;
+  };
+
+  const formatDateTime = (isoDate) => {
+    const date = new Date(isoDate);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = String(date.getFullYear()).slice(-2);
+    
+    let hours = date.getHours();
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+
+    return `${day}/${month}/${year}, ${hours}:${minutes} ${ampm}`;
+  };
+
   return (
     <div
       className={`dashboard-layout ${
@@ -125,17 +151,17 @@ export default function Dashboard() {
 
         <h4 className="sidebar-heading">Navigation</h4>
         <nav className="sidebar-nav">
-          <a href="#" className="active">
+          <a href="#" className="active" onClick={() => navigate('/dashboard')}>
             <span className="nav-icon">
               <FaHome />
             </span>
             <span className="nav-text">Dashboard</span>
           </a>
-          <a href="#">
+          <a href="#" onClick={() => navigate('/allhazards')}>
             <span className="nav-icon">
               <FaExclamationTriangle />
             </span>
-            <span className="nav-text">My Hazards</span>
+            <span className="nav-text">All Hazards</span>
           </a>
           <a href="#">
             <span className="nav-icon">
@@ -240,14 +266,14 @@ export default function Dashboard() {
                     {hazard.location && <span className="hazard-location">{hazard.location}</span>}
                     <span className="hazard-timestamp">
                       <FaRegClock />
-                      {new Date(hazard.reported_time).toLocaleString()}
+                      {formatDateTime(hazard.reported_time)}
                     </span>
                   </div>
                 </div>
                 <div className="hazard-card-footer">
                   {hazard.status && (
                     <span className={`status-badge status-${hazard.status}`}>
-                      {(hazard.status === 'resolved' || hazard.status === 'accepted' || hazard.status === 'normal') && <FaCheckCircle />}
+                      {getStatusIcon(hazard.status)}
                       {` ${hazard.status.charAt(0).toUpperCase() + hazard.status.slice(1)}`}
                     </span>
                   )}
@@ -258,6 +284,7 @@ export default function Dashboard() {
         </section>
       </main>
 
+      {/* Corrected: The Create Hazard Form Modal */}
       <button className="fab" onClick={() => setShowForm(true)}>
         <FaPlus />
       </button>
@@ -321,7 +348,6 @@ export default function Dashboard() {
           <img src={expandedImage} alt="Expanded Hazard" />
         </div>
       )}
-
     </div>
   );
 }
