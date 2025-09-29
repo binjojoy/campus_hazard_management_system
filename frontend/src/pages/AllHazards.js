@@ -87,6 +87,9 @@ export default function AllHazards() {
     }
     return null;
   };
+
+  // Notification count: hazards reported by the logged-in user
+  const notificationCount = hazards.filter(h => h.user_id === userId).length;
   
   return (
     <div
@@ -172,7 +175,7 @@ export default function AllHazards() {
           </div>
           <div className="notifications">
             <button>
-              <FaBell /> Notifications ({hazards.length})
+              <FaBell /> Notifications ({notificationCount})
             </button>
           </div>
         </header>
