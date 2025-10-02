@@ -25,7 +25,12 @@ export default function Login() {
         password,
       });
       localStorage.setItem("user", JSON.stringify(res.data.user));
-      navigate("/dashboard");
+      //console.log(res.data.user.profile.role);
+      if(res.data.user.profile.role === "admin"){
+        navigate("/admindashboard");
+      } else {
+        navigate("/dashboard");
+      }
     } catch (err) {
       setMessage(err.response?.data?.message || err.message);
     }
