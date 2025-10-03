@@ -64,7 +64,7 @@ router.post("/login", async (req, res) => {
     }
 
     const user = data.user;
-
+    console.log(data);
     // 2. Fetch profile from users table
     const { data: profile, error: profileError } = await supabase
       .from("users")
