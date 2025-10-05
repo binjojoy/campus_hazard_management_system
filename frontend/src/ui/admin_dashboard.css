@@ -144,3 +144,32 @@
 .action-btn:hover {
   background-color: #4a2334; /* A darker shade of your accent color */
 }
+
+/* --- NEW: Styles for the Details Modal Card --- */
+.modal-card {
+  width: 90%; /* Make it responsive */
+  max-width: 600px; /* A good, larger size for the modal */
+  min-height: 450px; /* Ensure it has some height */
+  /* Add an animation to pop in smoothly */
+  transform: scale(0.95);
+  opacity: 0;
+  animation: scale-up 0.2s cubic-bezier(0.2, 0, 0, 1) forwards;
+}
+
+/* Make the image inside the larger modal card taller */
+.modal-card .hazard-image-container,
+.modal-card .hazard-image-placeholder {
+  height: 250px;
+}
+
+/* Animation for the modal to pop in */
+@keyframes scale-up {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
