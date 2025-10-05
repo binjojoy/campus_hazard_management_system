@@ -6,7 +6,7 @@ import authRouter from "./routes/auth.js";
 import hazardRoutes from "./routes/hazard.js";
 import actionsRouter from "./routes/actions.js";
 import feedbackRouter from "./routes/feedback.js";
-
+import messagesRouter from "./routes/messages.js";
 dotenv.config();
 
 const app = express();
@@ -29,7 +29,7 @@ app.use("/api/hazards/:hazardId/feedback", feedbackRouter);
 app.use("/api/health", healthRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/hazard", hazardRoutes);
-
+app.use("/api/hazards/:hazardId/messages", messagesRouter);
 
 app.use((req, res) => res.status(404).json({ error: "Not found" }));
 

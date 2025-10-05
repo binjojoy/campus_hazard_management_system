@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   FaTachometerAlt, FaExclamationTriangle, FaUsers, FaCog, FaSignOutAlt,
   FaEye, FaRegClock, FaUserCircle, FaImage, FaTimes, 
-  FaHistory, FaEdit, FaTools, // Removed FaPaperPlane, Added FaTools
+  FaHistory, FaEdit, FaTools, FaPaperPlane,
 } from 'react-icons/fa';
 
 // Import the required CSS files
@@ -14,18 +14,27 @@ import '../ui/dashboard_styles.css';
 export default function ManageHazards() {
   const navigate = useNavigate();
 
+  // --- Get Logged-in User ---
+  const user = JSON.parse(localStorage.getItem("user"));
+
   // --- State Management ---
-  const [hazards, setHazards] =useState([]);
+  const [hazards, setHazards] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [managingHazard, setManagingHazard] = useState(null);
 
-  // State for the management modal
+  // Modal-specific state
   const [actions, setActions] = useState([]);
   const [newStatus, setNewStatus] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [modalLoading, setModalLoading] = useState(false);
+
+  // --- New State for Messaging ---
+  const [messages, setMessages] = useState([]);
+  const [newMessageContent, setNewMessageContent] = useState("");
+  const [isSending, setIsSending] = useState(false);
+  const [messagesLoading, setMessagesLoading] = useState(false);
 
   // --- Data Fetching ---
   const fetchHazards = async () => {
@@ -43,6 +52,24 @@ export default function ManageHazards() {
   useEffect(() => {
     fetchHazards();
   }, []);
+
+  // --- Fetch Messages When Modal Opens ---
+  useEffect(() => {
+    if (managingHazard) {
+      const fetchMessages = async () => {
+        setMessagesLoading(true);
+        try {
+          const res = await axios.get(`http://localhost:5001/api/hazards/${managingHazard.hazard_id}/messages`);
+          setMessages(res.data);
+        } catch (err) {
+          console.error("Failed to fetch messages", err);
+        } finally {
+          setMessagesLoading(false);
+        }
+      };
+      fetchMessages();
+    }
+  }, [managingHazard]);
 
   // --- Modal Logic ---
   const openManageModal = async (hazard) => {
@@ -63,9 +90,11 @@ export default function ManageHazards() {
     setManagingHazard(null);
     setActions([]);
     setNewStatus("");
+    setMessages([]);
+    setNewMessageContent("");
   };
 
-  // --- Form Handler ---
+  // --- Form Handlers ---
   const handleUpdateStatus = async () => {
     if (newStatus === managingHazard.status) return;
     setIsSubmitting(true);
@@ -75,8 +104,7 @@ export default function ManageHazards() {
       });
 
       const logDescription = `Status changed to ${newStatus}`;
-      // Use the same placeholder UUID you provided
-      const adminUserId = "bdd12a57-de63-4875-8539-3b5f0434836d";
+      const adminUserId = user?.id || "bdd12a57-de63-4875-8539-3b5f0434836d"; // Use real ID or fallback
       
       await axios.post(`http://localhost:5001/api/hazards/${managingHazard.hazard_id}/actions`, {
         description: logDescription,
@@ -92,7 +120,28 @@ export default function ManageHazards() {
       setIsSubmitting(false);
     }
   };
-  
+
+  // --- Function to Send a New Message ---
+  const handleSendMessage = async (e) => {
+    e.preventDefault();
+    if (!newMessageContent.trim()) return;
+    
+    setIsSending(true);
+    try {
+      const res = await axios.post(`http://localhost:5001/api/hazards/${managingHazard.hazard_id}/messages`, {
+        content: newMessageContent,
+        sender_id: user?.id,
+      });
+      setMessages([...messages, res.data]);
+      setNewMessageContent("");
+    } catch (err) {
+      console.error("Failed to send message", err);
+      alert("Error: Could not send the message.");
+    } finally {
+      setIsSending(false);
+    }
+  };
+
   // --- Helper Functions ---
   const handleLogout = () => {
     localStorage.removeItem("user");
@@ -112,9 +161,7 @@ export default function ManageHazards() {
 
   return (
     <div className="dashboard-layout">
-      {/* --- Sidebar (no changes) --- */}
       <aside className="sidebar">
-        {/* ... sidebar code remains the same ... */}
         <div className="sidebar-header"><span className="sidebar-icon">🛡️</span><div className="sidebar-header-text"><h2>Campus Safety</h2><span className="subtitle">Admin Portal</span></div></div>
         <h4 className="sidebar-heading">Navigation</h4>
         <nav className="sidebar-nav">
@@ -131,9 +178,7 @@ export default function ManageHazards() {
         <button className="logout" onClick={handleLogout}><span className="nav-icon"><FaSignOutAlt /></span><span className="nav-text">Logout</span></button>
       </aside>
 
-      {/* --- Main Content Area (no changes) --- */}
       <main className="main-content">
-        {/* ... main content code remains the same ... */}
         <header className="topbar">
           <div>
             <h1 className="welcome-message">Manage Hazards</h1>
@@ -149,12 +194,10 @@ export default function ManageHazards() {
             <div className="search-bar">
               <input type="text" placeholder="Search hazards..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
             </div>
-
             <section className="recent-hazards">
               <h3>All Hazard Reports ({filteredHazards.length})</h3>
               <div className="table-container">
                 <table className="admin-table">
-                  {/* ... table code remains the same ... */}
                   <thead>
                     <tr>
                       <th>Title</th>
@@ -184,13 +227,11 @@ export default function ManageHazards() {
         )}
       </main>
 
-      {/* --- COMPLETELY REDESIGNED Management Modal --- */}
       {managingHazard && (
         <div className="modal-overlay" onClick={closeManageModal}>
           <div className="modal-card-new" onClick={e => e.stopPropagation()}>
             <button className="close-card-btn-new" onClick={closeManageModal}><FaTimes /></button>
             
-            {/* --- Hazard Image --- */}
             {managingHazard.image_url ? (
               <div className="modal-image-container">
                 <img src={managingHazard.image_url} alt="Hazard" />
@@ -203,14 +244,12 @@ export default function ManageHazards() {
             )}
 
             <div className="modal-content-area">
-              {/* --- Hazard Header --- */}
               <div className="modal-header">
                 <span className={`status-badge status-${managingHazard.status}`}>{managingHazard.status}</span>
                 <h3>{managingHazard.hazard_title}</h3>
                 <p className="modal-description">{managingHazard.hazard_description}</p>
               </div>
 
-              {/* --- Hazard Metadata --- */}
               <div className="modal-meta">
                 <div className="meta-item">
                   <FaUserCircle />
@@ -222,14 +261,12 @@ export default function ManageHazards() {
                 </div>
               </div>
               
-              {/* --- Admin Control Section --- */}
               <div className="admin-section">
                 <div className="admin-section-header">
                   <FaTools />
                   <h4>Admin Controls</h4>
                 </div>
 
-                {/* --- Status Update --- */}
                 <div className="control-group">
                   <label htmlFor="status-select">Update Status</label>
                   <div className="status-update-form-new">
@@ -245,7 +282,6 @@ export default function ManageHazards() {
                   </div>
                 </div>
                 
-                {/* --- Action History --- */}
                 <div className="control-group">
                   <label><FaHistory /> Action History</label>
                   <div className="action-log-new">
@@ -260,6 +296,37 @@ export default function ManageHazards() {
                       ) : <p className="no-actions">No actions logged yet.</p>
                     }
                   </div>
+                </div>
+
+                {/* --- THIS IS THE MESSAGE SECTION --- */}
+                <div className="control-group">
+                  <label><FaPaperPlane /> Send a Message to Student</label>
+                  
+                  <div className="message-history">
+                    {messagesLoading ? <p>Loading messages...</p> :
+                      messages.length > 0 ? (
+                        messages.map(msg => (
+                          <div key={msg.id} className="message-bubble">
+                            <strong className="message-sender">{msg.sender?.username || 'Admin'}</strong>
+                            <p className="message-content">{msg.content}</p>
+                            <span className="message-timestamp">{formatDateTime(msg.created_at)}</span>
+                          </div>
+                        ))
+                      ) : <p className="no-actions">No messages have been sent yet.</p>
+                    }
+                  </div>
+
+                  <form className="message-input-form" onSubmit={handleSendMessage}>
+                    <textarea
+                      placeholder="Type your message..."
+                      value={newMessageContent}
+                      onChange={(e) => setNewMessageContent(e.target.value)}
+                      disabled={isSending}
+                    />
+                    <button type="submit" disabled={isSending}>
+                      {isSending ? '...' : 'Send'}
+                    </button>
+                  </form>
                 </div>
               </div>
             </div>
