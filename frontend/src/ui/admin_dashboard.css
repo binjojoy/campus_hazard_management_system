@@ -173,3 +173,347 @@
     opacity: 1;
   }
 }
+/* --- Add these new styles to your admin_dashboard.css file --- */
+
+/* Styles for the 'active' link state in the sidebar */
+.sidebar-nav a.active {
+  background-color: var(--accent-color);
+  color: white;
+}
+.sidebar-nav a.active .nav-icon, 
+.sidebar-nav a.active .nav-text {
+  color: white;
+}
+
+/* For responsiveness on smaller screens */
+.table-container {
+  width: 100%;
+  overflow-x: auto; 
+}
+
+/* A distinct blue for the 'manage' button */
+.action-btn.manage-btn {
+  background-color: #3498DB; 
+  font-size: 0.85rem;
+  padding: 8px 14px;
+}
+.action-btn.manage-btn:hover {
+  background-color: #2980B9;
+}
+
+/* --- Management Modal Styles --- */
+.manage-modal {
+  max-width: 900px;
+  min-height: 550px;
+}
+.manage-modal .hazard-card-header {
+  padding: 15px 25px;
+  background-color: #f7f7f7;
+  border-bottom: 1px solid #e0e0e0;
+}
+.manage-modal .hazard-card-header h4 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: var(--primary-text-color);
+}
+.manage-modal-content {
+  display: flex;
+  padding: 25px;
+  gap: 30px;
+}
+.modal-section { flex: 1; }
+.modal-section h5 {
+  font-size: 1rem;
+  color: var(--accent-color);
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 2px solid var(--accent-color);
+  padding-bottom: 8px;
+}
+.modal-divider {
+  border: none;
+  border-top: 1px solid #eee;
+  margin: 20px 0;
+}
+.details-section .hazard-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.9rem;
+  margin-top: 15px;
+}
+.status-update-form { display: flex; gap: 10px; }
+.status-update-form select {
+  flex-grow: 1;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 0.9rem;
+}
+.status-update-form button {
+  padding: 8px 15px;
+  border: none;
+  background-color: #4caf50;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-weight: 500;
+}
+.status-update-form button:hover { background-color: #45a049; }
+.status-update-form button:disabled { background-color: #ccc; cursor: not-allowed; }
+.action-log {
+  max-height: 250px;
+  overflow-y: auto;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 10px;
+  background-color: #fafafa;
+}
+.action-item {
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #e0e0e0;
+}
+.action-item:last-child { border-bottom: none; margin-bottom: 0; }
+.action-desc { margin: 0 0 5px 0; color: var(--primary-text-color); }
+.action-meta { font-size: 0.75rem; color: var(--secondary-text-color); }
+.new-action-form { display: flex; flex-direction: column; gap: 10px; }
+.new-action-form textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  resize: vertical;
+  font-family: inherit;
+  font-size: 0.9rem;
+}
+.new-action-form button {
+  align-self: flex-end;
+  padding: 8px 15px;
+  border: none;
+  background-color: var(--accent-color);
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.new-action-form button:hover { background-color: #4a2334; }
+
+
+
+/* --- REDESIGNED MANAGE MODAL --- */
+
+.modal-card-new {
+  background-color: var(--background-color, #fafafa);
+  width: 95%;
+  max-width: 550px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  /* Animation */
+  transform: scale(0.95);
+  opacity: 0;
+  animation: scale-up 0.2s cubic-bezier(0.2, 0, 0, 1) forwards;
+}
+
+.close-card-btn-new {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background-color: rgba(0, 0, 0, 0.4);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: background-color 0.2s;
+}
+.close-card-btn-new:hover {
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+.modal-image-container {
+  width: 100%;
+  height: 250px;
+  background-color: #e0e0e0;
+}
+.modal-image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.modal-image-placeholder {
+  width: 100%;
+  height: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #f0f0f0;
+  color: var(--secondary-text-color);
+  font-size: 1.5rem;
+}
+.modal-image-placeholder svg {
+  font-size: 3rem;
+  margin-bottom: 10px;
+}
+
+.modal-content-area {
+  padding: 20px 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.modal-header .status-badge {
+  margin-bottom: 10px;
+}
+.modal-header h3 {
+  font-size: 1.6rem;
+  color: var(--primary-text-color);
+  margin: 0 0 8px 0;
+}
+.modal-description {
+  font-size: 1rem;
+  color: var(--secondary-text-color);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.modal-meta {
+  display: flex;
+  gap: 20px;
+  font-size: 0.9rem;
+  color: var(--secondary-text-color);
+  padding: 15px 0;
+  border-top: 1px solid #e0e0e0;
+  border-bottom: 1px solid #e0e0e0;
+}
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* --- Admin Control Area --- */
+.admin-section {
+  background-color: #f7f7f9;
+  border-radius: 12px;
+  padding: 20px;
+}
+.admin-section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--accent-color);
+  margin-bottom: 20px;
+}
+.admin-section-header h4 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.control-group {
+  margin-bottom: 20px;
+}
+.control-group:last-child {
+  margin-bottom: 0;
+}
+.control-group label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: var(--primary-text-color);
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+}
+
+.status-update-form-new {
+  display: flex;
+  gap: 10px;
+}
+.status-update-form-new select {
+  flex-grow: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  background-color: white;
+}
+.status-update-form-new button {
+  padding: 10px 20px;
+  border: none;
+  background-color: var(--accent-color);
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+.status-update-form-new button:hover {
+  background-color: #4a2334;
+}
+.status-update-form-new button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.action-log-new {
+  max-height: 150px;
+  overflow-y: auto;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 15px;
+  background-color: white;
+}
+.action-item-new {
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #f0f0f0;
+}
+.action-item-new:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+.action-log-new .no-actions {
+  color: var(--secondary-text-color);
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
+/* In admin_dashboard.css */
+
+.modal-card-new {
+  /* ... existing styles ... */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  /* ADD THIS LINE 👇 */
+  max-height: 90vh; /* Limits card height to 90% of the viewport height */
+}
+
+.modal-content-area {
+  /* ... existing styles ... */
+  display: flex;
+  flex-direction: column;
+
+  /* ADD THIS LINE 👇 */
+  overflow-y: auto; /* Adds a scrollbar if content is too long */
+}
