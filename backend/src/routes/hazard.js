@@ -64,6 +64,48 @@ router.post("/new_hazard", upload.single("image"), async (req, res) => {
 /**
  * Corrected route to fetch all hazards without relying on a foreign key join.
  */
+// In your routes/hazard.js file
+
+// --- ADD THIS NEW ROUTE HANDLER ---
+router.put("/update_status/:hazard_id", async (req, res) => {
+  try {
+    const { hazard_id } = req.params;
+    const { status } = req.body;
+
+    // 1. Validate that we received a status
+    if (!status) {
+      return res.status(400).json({ error: "Status field is required." });
+    }
+    
+    // 2. Perform the update in the Supabase database
+    const { data, error } = await supabase
+      .from("hazard")
+      .update({ status: status }) // Update the status column
+      .eq("hazard_id", hazard_id) // Where the ID matches
+      .select(); // Return the updated record
+
+    // 3. Handle any database errors
+    if (error) {
+      throw error;
+    }
+    
+    // 4. Handle case where no record was found with that ID
+    if (!data || data.length === 0) {
+        return res.status(404).json({ error: "Hazard not found with that ID." });
+    }
+
+    // 5. Send a success response back to the frontend
+    res.status(200).json({ 
+        message: "Hazard status updated successfully", 
+        hazard: data[0] 
+    });
+
+  } catch (err) {
+    console.error("Error updating hazard status:", err.message);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 router.get("/fetch_all_hazards", async (req, res) => {
   try {
     // Fetch all hazards first

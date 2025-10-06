@@ -2,19 +2,11 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import {
-  FaTachometerAlt,
-  FaExclamationTriangle,
-  FaUsers,
-  FaCog,
-  FaSignOutAlt,
-  FaEye,
-  FaRegClock,
-  FaUserCircle,
-  FaImage,
-  FaTimes, // Added for the modal close button
+  FaTachometerAlt, FaExclamationTriangle, FaUsers, FaCog, FaSignOutAlt,
+  FaEye, FaRegClock, FaUserCircle, FaImage, FaTimes,
 } from 'react-icons/fa';
-import '../ui/admin_dashboard.css'; // Your existing admin CSS for stats and table
-import '../ui/dashboard_styles.css'; // Reusing the student dashboard CSS for modal and cards
+import '../ui/admin_dashboard.css';
+import '../ui/dashboard_styles.css';
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -25,7 +17,7 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedHazard, setSelectedHazard] = useState(null); // State for the details modal
+  const [selectedHazard, setSelectedHazard] = useState(null);
 
   // --- Data Fetching and Calculation Effect ---
   useEffect(() => {
@@ -38,7 +30,7 @@ export default function AdminDashboard() {
         const calculatedStats = {
           totalHazards: allHazards.length,
           pendingReview: allHazards.filter(h => h.status === 'pending').length,
-          inProgress: allHazards.filter(h => h.status === 'in-progress').length,
+          inProgress: allHazards.filter(h => h.status === 'acknowledged').length, // Corrected to match schema
           urgent: allHazards.filter(h => h.is_urgent === true).length,
         };
 
@@ -78,8 +70,24 @@ export default function AdminDashboard() {
     <div className="dashboard-layout">
       {/* Sidebar - Consistent with your existing UI */}
       <aside className="sidebar">
-        {/* ... Sidebar content remains the same ... */}
-        <div className="sidebar-header"><span className="sidebar-icon">🛡️</span><div className="sidebar-header-text"><h2>Campus Safety</h2><span className="subtitle">Admin Portal</span></div></div><h4 className="sidebar-heading">Navigation</h4><nav className="sidebar-nav"><a href="#" className="active"><span className="nav-icon"><FaTachometerAlt /></span><span className="nav-text">Dashboard</span></a><a href="#"><span className="nav-icon"><FaExclamationTriangle /></span><span className="nav-text">Manage Hazards</span></a><a href="#"><span className="nav-icon"><FaUsers /></span><span className="nav-text">Manage Users</span></a></nav><h4 className="sidebar-heading">Resources</h4><div className="sidebar-resources"><a href="#"><span className="nav-icon"><FaCog /></span><span className="nav-text">Settings</span></a></div><button className="logout" onClick={handleLogout}><span className="nav-icon"><FaSignOutAlt /></span><span className="nav-text">Logout</span></button>
+        <div className="sidebar-header"><span className="sidebar-icon">🛡️</span><div className="sidebar-header-text"><h2>Campus Safety</h2><span className="subtitle">Admin Portal</span></div></div>
+        <h4 className="sidebar-heading">Navigation</h4>
+        
+        {/* --- MODIFIED SECTION: Navigation links now work --- */}
+        <nav className="sidebar-nav">
+          <a href="#" className="active" onClick={(e) => { e.preventDefault(); navigate('/admindashboard'); }}>
+            <span className="nav-icon"><FaTachometerAlt /></span><span className="nav-text">Dashboard</span>
+          </a>
+          <a href="#" onClick={(e) => { e.preventDefault(); navigate('/manage-hazards'); }}>
+            <span className="nav-icon"><FaExclamationTriangle /></span><span className="nav-text">Manage Hazards</span>
+          </a>
+          <a href="#"><span className="nav-icon"><FaUsers /></span><span className="nav-text">Manage Users</span></a>
+        </nav>
+        {/* --- END OF MODIFIED SECTION --- */}
+        
+        <h4 className="sidebar-heading">Resources</h4>
+        <div className="sidebar-resources"><a href="#"><span className="nav-icon"><FaCog /></span><span className="nav-text">Settings</span></a></div>
+        <button className="logout" onClick={handleLogout}><span className="nav-icon"><FaSignOutAlt /></span><span className="nav-text">Logout</span></button>
       </aside>
 
       {/* Main Content */}
@@ -96,22 +104,19 @@ export default function AdminDashboard() {
 
         {!loading && !error && (
           <>
-            {/* Statistics Grid - Admin Specific */}
             {stats && (
               <section className="stats-grid">
                 <div className="stat-card"><h3>{stats.totalHazards}</h3><p>Total Hazards</p></div>
                 <div className="stat-card"><h3>{stats.pendingReview}</h3><p>Pending Review</p></div>
-                <div className="stat-card"><h3>{stats.inProgress}</h3><p>In Progress</p></div>
+                <div className="stat-card"><h3>{stats.inProgress}</h3><p>Acknowledged</p></div>
                 <div className="stat-card urgent-card"><h3>{stats.urgent}</h3><p>Urgent Issues</p></div>
               </section>
             )}
 
-            {/* Search Bar */}
             <div className="search-bar">
               <input type="text" placeholder="Search hazards by title, user, or status..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
             </div>
 
-            {/* All Hazards Table */}
             <section className="recent-hazards">
               <h3>All Hazard Reports ({filteredHazards.length})</h3>
               <table className="admin-table">
@@ -166,7 +171,6 @@ export default function AdminDashboard() {
             </div>
             <div className="hazard-card-footer">
               <span className={`status-badge status-${selectedHazard.status || 'default'}`}>{selectedHazard.status || 'N/A'}</span>
-              {/* Future actions can go here, e.g., a dropdown to change status */}
             </div>
           </div>
         </div>
@@ -174,4 +178,3 @@ export default function AdminDashboard() {
     </div>
   );
 }
-
