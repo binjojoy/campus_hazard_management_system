@@ -134,7 +134,7 @@ export default function AllHazards() {
             </span>
             <span className="nav-text">All Hazards</span>
           </a>
-          <a href="#">
+          <a href="#" onClick={() => navigate('/message_reports')}>
             <span className="nav-icon">
               <FaFileAlt />
             </span>

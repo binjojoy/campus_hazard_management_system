@@ -230,5 +230,55 @@ router.delete("/delete_all", async (req, res) => {
   }
 });
 
+router.get("/fetch_messages", async (req, res) => {
+  try {
+    const { user_id } = req.query;
+
+    if (!user_id) {
+      return res.status(400).json({ error: "user_id is required" });
+    }
+
+    const { data: messages, error } = await supabase
+      .from("messages")
+      .select(`
+        *,
+        hazard (
+          hazard_title,
+          hazard_description,
+          reported_time
+        )
+      `)
+      //.eq("sender_id", user_id)
+      .order("created_at", { ascending: true }); // Order messages chronologically
+
+    if (error) throw error;
+    res.status(200).json({ messages }); // Corrected: Return as a messages object
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch messages: " + err.message });
+  }
+});
+
+router.get("/all", async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from("feedback")
+      .select(`
+        *,
+        hazard (
+          hazard_title
+        )
+      `)
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      return res.status(500).json({ error: "Failed to fetch feedback: " + error.message });
+    }
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
 
 export default router;

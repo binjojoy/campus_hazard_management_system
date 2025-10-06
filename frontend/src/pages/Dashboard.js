@@ -193,17 +193,18 @@ export default function Dashboard() {
             </span>
             <span className="nav-text">All Hazards</span>
           </a>
-          <a href="#">
+          <a href="#" onClick={() => navigate('/message_reports')}>
             <span className="nav-icon">
               <FaFileAlt />
             </span>
             <span className="nav-text">Reports</span>
+            
           </a>
-          <a href="#">
+          <a href="#" onClick={() => navigate('/feedback')}>
             <span className="nav-icon">
               <FaMapMarkedAlt />
             </span>
-            <span className="nav-text">Campus Map</span>
+            <span className="nav-text">Feedback</span>
           </a>
         </nav>
 

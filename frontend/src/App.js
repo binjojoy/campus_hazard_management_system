@@ -5,7 +5,9 @@ import Dashboard from './pages/Dashboard';
 import AllHazards from './pages/AllHazards';
 import LandingPage from './pages/LandingPage';
 import AdminDashboard from './pages/AdminDashboard';
-import ManageHazards from './pages/ManageHazards';  
+import ManageHazards from './pages/ManageHazards';
+import MessageReports from './pages/MessageReports';  
+import Feedback from './pages/Feedback';
 function App() {
   return (
     <Routes>
@@ -16,6 +18,8 @@ function App() {
       <Route path="/allhazards" element={<AllHazards/>} />
       <Route path="/admindashboard" element={<AdminDashboard/>} />
       <Route path='/manage-hazards' element={<ManageHazards/>} />
+      <Route path="/message_reports"element={<MessageReports />} /> {/* Corrected: Added dynamic parameter */}
+      <Route path="/feedback" element={<Feedback />} />
     </Routes>
   );
 }
