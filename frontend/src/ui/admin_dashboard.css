@@ -517,3 +517,84 @@
   /* ADD THIS LINE 👇 */
   overflow-y: auto; /* Adds a scrollbar if content is too long */
 }
+
+
+
+
+/* --- NEW MESSAGING INTERFACE STYLES --- */
+
+.message-history {
+  background-color: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 10px;
+  margin-top: 10px;
+  max-height: 150px; /* Controls the height of the chat history box */
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.message-bubble {
+  background-color: #f0f0f0;
+  padding: 8px 12px;
+  border-radius: 12px;
+  max-width: 90%;
+  align-self: flex-start;
+}
+
+.message-sender {
+  font-weight: 600;
+  color: var(--accent-color);
+  font-size: 0.8rem;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.message-content {
+  margin: 0;
+  color: var(--primary-text-color);
+  word-wrap: break-word; /* Prevents long words from overflowing */
+}
+
+.message-timestamp {
+  font-size: 0.7rem;
+  color: var(--secondary-text-color);
+  text-align: right;
+  display: block;
+  margin-top: 5px;
+}
+
+.message-input-form {
+  display: flex;
+  margin-top: 10px;
+  gap: 10px;
+}
+
+.message-input-form textarea {
+  flex-grow: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  resize: vertical;
+  min-height: 44px; /* Matches button height */
+  font-size: 0.95rem;
+  font-family: inherit;
+}
+
+.message-input-form button {
+  padding: 10px 20px;
+  border: none;
+  background-color: var(--accent-color);
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+
+.message-input-form button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
